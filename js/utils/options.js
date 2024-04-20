@@ -14,6 +14,7 @@ function getStartOptions() {
 		forceOneTab: false,
 		oldStyle: false,
 		tooltipForcing: true,
+		maxBarSpeed: 5
 	}
 }
 
@@ -76,3 +77,12 @@ function milestoneShown(layer, id) {
 	}
 	return false;
 }
+
+const BAR_SPEED_DISPLAYS = ["DEFAULT (5/s)","SLOW (2/s)","SLOWER(1/s)","SLOWEST (Always Solid)","EXTREME (10/s!!!)"];
+const BAR_SPEEDS = [5,2,1,0.0001,10];
+
+function maxBarSpeed(){
+	options.maxBarSpeed = BAR_SPEEDS[(BAR_SPEEDS.indexOf(options.maxBarSpeed) + 1) % 5];
+}
+
+
