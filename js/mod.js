@@ -3,7 +3,7 @@ let modInfo = {
 	id: "bargameC39",
 	author: "Classified39",
 	pointsName: "points",
-	modFiles: ["bar.js", "tree.js", "achievements.js"],
+	modFiles: ["bar.js", "tree.js", "achievements.js","metabar.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,12 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "6 bars and a dream.",
+	num: "0.2",
+	name: "Oh So Meta.",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.1, 6 bars and a dream</h3><br>
+	<h3>v0.2: Oh So Meta</h3><br>
+		-Meta layer
+		-5 more achievements
+		-offline progress
+		
+	<h3>v0.1: 6 bars and a dream</h3><br>
 		- 6 Progress Bars<br>
 		- Max (visual) speed button and explanation.<br>
 		-5 wholy unnecessary achievements.`
@@ -53,9 +58,8 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return getBuyableAmount("b","redBarLevel").gte(100);
+	return player["m"].points.gte(1e6);
 }
-
 
 
 // Less important things beyond this point!

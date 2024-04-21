@@ -9,7 +9,6 @@ addLayer("b", {
         barProgress: [new Decimal(0),new Decimal(0),new Decimal(0),new Decimal(0),new Decimal(0),new Decimal(0)],
         barsUnlocked: new Decimal(1),
         pointMultipliers: [new Decimal(1),new Decimal(1),new Decimal(1),new Decimal(1),new Decimal(1),new Decimal(1)],
-        multPerFill: [new Decimal(0.1),new Decimal(0.1),new Decimal(0.1),new Decimal(0.1),new Decimal(0.1),new Decimal(0.1)],
     }},
     color: "#F94144",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
@@ -30,19 +29,24 @@ addLayer("b", {
         {key: "b", description: "B: Reset for bar points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
+    getSpeed(index){
+        if (player[this.layer].progressMult[index] === undefined ) return new Decimal(0);
+        if (layers["m"].getSpeedMult() === undefined) return player[this.layer].progressMult[index];
+        else return player[this.layer].progressMult[index].mul(layers["m"].getSpeedMult())
+    },
     bars: {
         redBar: {
             direction: RIGHT,
             width: 500,
             height: 50,
             progress() { 
-                if (player[this.layer].progressMult[0].gt(options.maxBarSpeed)) return 1;
+                if (layers["b"].getSpeed(0).gt(options.maxBarSpeed)) return 1;
                 else return player[this.layer].barProgress[0]
             },
             unlocked(){ return true},
             fillStyle: {"background-color":"#F94144","transition-duration":"0.05s"},
             display(){
-                if (player[this.layer].progressMult[0].gt(options.maxBarSpeed)) return format(player[this.layer].progressMult[0]) + "/s";
+                if (layers["b"].getSpeed(0).gt(options.maxBarSpeed)) return format(layers["b"].getSpeed(0)) + "/s";
             },
         },
         orangeBar: {
@@ -50,14 +54,14 @@ addLayer("b", {
             width: 500,
             height: 50,
             progress() { 
-                if (player[this.layer].progressMult[1].gt(options.maxBarSpeed)) return 1;
+                if (layers["b"].getSpeed(1).gt(options.maxBarSpeed)) return 1;
                 else return player[this.layer].barProgress[1]
             },
             unlocked(){ return player[this.layer].barsUnlocked.gte(2)},
             fillStyle: {"background-color":"#F3722C","transition-duration":"0.05s"},
             display(){
-                if (player[this.layer].progressMult[1].gt(options.maxBarSpeed))
-                    return format(player[this.layer].progressMult[1]) + "/s";
+                if (layers["b"].getSpeed(1).gt(options.maxBarSpeed))
+                    return format(layers["b"].getSpeed(1)) + "/s";
             },
         },
         yellowBar: {
@@ -65,14 +69,14 @@ addLayer("b", {
             width: 500,
             height: 50,
             progress() { 
-                if (player[this.layer].progressMult[2].gt(options.maxBarSpeed)) return 1;
+                if (layers["b"].getSpeed(2).gt(options.maxBarSpeed)) return 1;
                 else return player[this.layer].barProgress[2]
             },
             unlocked(){ return player[this.layer].barsUnlocked.gte(3)},
             fillStyle: {"background-color":"#E9B73F","transition-duration":"0.05s"},
             display(){
-                if (player[this.layer].progressMult[2].gt(options.maxBarSpeed))
-                    return format(player[this.layer].progressMult[2]) + "/s";
+                if (layers["b"].getSpeed(2).gt(options.maxBarSpeed))
+                    return format(layers["b"].getSpeed(2)) + "/s";
             },
         },
         greenBar: {
@@ -80,14 +84,14 @@ addLayer("b", {
             width: 500,
             height: 50,
             progress() { 
-                if (player[this.layer].progressMult[3].gt(options.maxBarSpeed)) return 1;
+                if (layers["b"].getSpeed(3).gt(options.maxBarSpeed)) return 1;
                 else return player[this.layer].barProgress[3]
             },
             unlocked(){ return player[this.layer].barsUnlocked.gte(4)},
             fillStyle: {"background-color":"#90BE6D","transition-duration":"0.05s"},
             display(){
-                if (player[this.layer].progressMult[3].gt(options.maxBarSpeed))
-                    return format(player[this.layer].progressMult[3]) + "/s";
+                if (layers["b"].getSpeed(3).gt(options.maxBarSpeed))
+                    return format(layers["b"].getSpeed(3)) + "/s";
             },
         },
         blueBar: {
@@ -95,14 +99,14 @@ addLayer("b", {
             width: 500,
             height: 50,
             progress() { 
-                if (player[this.layer].progressMult[4].gt(options.maxBarSpeed)) return 1;
+                if (layers["b"].getSpeed(4).gt(options.maxBarSpeed)) return 1;
                 else return player[this.layer].barProgress[4]
             },
             unlocked(){ return player[this.layer].barsUnlocked.gte(5)},
             fillStyle: {"background-color":"#277DA1","transition-duration":"0.05s"},
             display(){
-                if (player[this.layer].progressMult[4].gt(options.maxBarSpeed)) 
-                    return format(player[this.layer].progressMult[4]) + "/s";
+                if (layers["b"].getSpeed(4).gt(options.maxBarSpeed)) 
+                    return format(layers["b"].getSpeed(4)) + "/s";
             },
         },
         purpleBar: {
@@ -110,23 +114,35 @@ addLayer("b", {
             width: 500,
             height: 50,
             progress() { 
-                if (player[this.layer].progressMult[5].gt(options.maxBarSpeed)) return 1;
+                if (layers["b"].getSpeed(5).gt(options.maxBarSpeed)) return 1;
                 else return player[this.layer].barProgress[5]
             },
             unlocked(){ return player[this.layer].barsUnlocked.gte(6)},
             fillStyle: {"background-color":"#6A4C93","transition-duration":"0.05s"},
             display(){
-                if (player[this.layer].progressMult[5].gt(options.maxBarSpeed)) 
-                    return format(player[this.layer].progressMult[5]) + "/s";
+                if (layers["b"].getSpeed(5).gt(options.maxBarSpeed)) 
+                    return format(layers["b"].getSpeed(5)) + "/s";
             },
         },
     },
+    getLevel(color){
+        if (getBuyableAmount("b",color+"BarLevel") === undefined) return ""; 
+        if (getBuyableAmount("b",color+"BarLevel").gte(100)) return "MAX";
+        else return getBuyableAmount("b",color+"BarLevel");
+    },
+    getTotalMultiplier(){
+        let pointsEveryBar = new Decimal(1)
+        for (let i = 0; i < player[this.layer].barsUnlocked; i++){
+            pointsEveryBar = pointsEveryBar.mul(player[this.layer].pointMultipliers[i])
+        }
+        return pointsEveryBar
+    },
     buyables:{
         redBarLevel:{
-            cost(x) {return (new Decimal(1).mul(x).mul(new Decimal(1.02).pow(x)))},
-            display() {return "Red Bar Lv."+getBuyableAmount("b","redBarLevel")+"<br> "+
+            cost(x) {return (new Decimal(1).mul(x.add(1)).mul(new Decimal(1.02).pow(x)))},
+            display() {return "Red Bar Lv."+layers["b"].getLevel("red")+"<br> "+
             "+0.06 fills/s per level.<br>Cost: "+format(this.cost())},
-            canAfford(){return player[this.layer].points.gte(this.cost())},
+            canAfford(){return player[this.layer].points.gte(this.cost()) && getBuyableAmount("b","redBarLevel").lt(100)},
             buy(){
                 player[this.layer].points = player[this.layer].points.sub(this.cost());
                 setBuyableAmount(this.layer,this.id,getBuyableAmount(this.layer,this.id).add(1));
@@ -135,10 +151,10 @@ addLayer("b", {
             style: {"width":"100px","height":"100px"}
         },
         orangeBarLevel:{
-            cost(x) {return (new Decimal(10).mul(x).mul(new Decimal(1.05).pow(x)))},
-            display() {return "Orange Bar Lv."+getBuyableAmount("b","orangeBarLevel")+"<br> "+
+            cost(x) {return (new Decimal(10).mul(x.add(1)).mul(new Decimal(1.05).pow(x)))},
+            display() {return "Orange Bar Lv."+layers["b"].getLevel("orange")+"<br> "+
             "+0.03 fills/s per level.<br>Cost: "+format(this.cost())},
-            canAfford(){return player[this.layer].points.gte(this.cost())},
+            canAfford(){return player[this.layer].points.gte(this.cost()) && getBuyableAmount("b","orangeBarLevel").lt(100)},
             buy(){
                 player[this.layer].points = player[this.layer].points.sub(this.cost());
                 setBuyableAmount(this.layer,this.id,getBuyableAmount(this.layer,this.id).add(1));
@@ -149,10 +165,10 @@ addLayer("b", {
                 else return {"width":"100px","height":"100px"}}
         },
         yellowBarLevel:{
-            cost(x) {return (new Decimal(50).mul(x).mul(new Decimal(1.07).pow(x)))},
-            display() {return "Yellow Bar Lv."+getBuyableAmount("b","yellowBarLevel")+"<br> "+
+            cost(x) {return (new Decimal(50).mul(x.add(1)).mul(new Decimal(1.07).pow(x)))},
+            display() {return "Yellow Bar Lv."+layers["b"].getLevel("yellow")+"<br> "+
             "+0.02 fills/s per level.<br>Cost: "+format(this.cost())},
-            canAfford(){return player[this.layer].points.gte(this.cost())},
+            canAfford(){return player[this.layer].points.gte(this.cost()) && getBuyableAmount("b","yellowBarLevel").lt(100)},
             buy(){
                 player[this.layer].points = player[this.layer].points.sub(this.cost());
                 setBuyableAmount(this.layer,this.id,getBuyableAmount(this.layer,this.id).add(1));
@@ -163,10 +179,10 @@ addLayer("b", {
             else return {"width":"100px","height":"100px"}}
         },
         greenBarLevel:{
-            cost(x) {return (new Decimal(150).mul(x).mul(new Decimal(1.09).pow(x)))},
-            display() {return "Green Bar Lv."+getBuyableAmount("b","greenBarLevel")+"<br> "+
+            cost(x) {return (new Decimal(150).mul(x.add(1)).mul(new Decimal(1.09).pow(x)))},
+            display() {return "Green Bar Lv."+layers["b"].getLevel("green")+"<br> "+
             "+0.015 fills/s per level.<br>Cost: "+format(this.cost())},
-            canAfford(){return player[this.layer].points.gte(this.cost())},
+            canAfford(){return player[this.layer].points.gte(this.cost()) && getBuyableAmount("b","greenBarLevel").lt(100)},
             buy(){
                 player[this.layer].points = player[this.layer].points.sub(this.cost());
                 setBuyableAmount(this.layer,this.id,getBuyableAmount(this.layer,this.id).add(1));
@@ -177,10 +193,10 @@ addLayer("b", {
             else return {"width":"100px","height":"100px"}}
         },
         blueBarLevel:{
-            cost(x) {return (new Decimal(300).mul(x).mul(new Decimal(1.11).pow(x)))},
-            display() {return "Blue Bar Lv."+getBuyableAmount("b","blueBarLevel")+"<br> "+
+            cost(x) {return (new Decimal(500).mul(x.add(1)).mul(new Decimal(1.11).pow(x)))},
+            display() {return "Blue Bar Lv."+layers["b"].getLevel("blue")+"<br> "+
             "+0.01 fills/s per level.<br>Cost: "+format(this.cost())},
-            canAfford(){return player[this.layer].points.gte(this.cost())},
+            canAfford(){return player[this.layer].points.gte(this.cost()) && getBuyableAmount("b","blueBarLevel").lt(100)},
             buy(){
                 player[this.layer].points = player[this.layer].points.sub(this.cost());
                 setBuyableAmount(this.layer,this.id,getBuyableAmount(this.layer,this.id).add(1));
@@ -191,10 +207,10 @@ addLayer("b", {
             else return {"width":"100px","height":"100px"}}
         },
         purpleBarLevel:{
-            cost(x) {return (new Decimal(1500).mul(x).mul(new Decimal(1.13).pow(x)))},
-            display() {return "Purple Bar Lv."+getBuyableAmount("b","purpleBarLevel")+"<br> "+
+            cost(x) {return (new Decimal(3000).mul(x.add(1)).mul(new Decimal(1.13).pow(x)))},
+            display() {return "Purple Bar Lv."+layers["b"].getLevel("purple")+"<br> "+
             "+0.007 fills/s per level.<br>Cost: "+format(this.cost())},
-            canAfford(){return player[this.layer].points.gte(this.cost())},
+            canAfford(){return player[this.layer].points.gte(this.cost()) && getBuyableAmount("b","purpleBarLevel").lt(100)},
             buy(){
                 player[this.layer].points = player[this.layer].points.sub(this.cost());
                 setBuyableAmount(this.layer,this.id,getBuyableAmount(this.layer,this.id).add(1));
@@ -226,13 +242,13 @@ addLayer("b", {
         },
         unlockBlue:{
             description: "Unlock Bar 5",
-            cost: new Decimal(300),
+            cost: new Decimal(500),
             onPurchase(){player[this.layer].barsUnlocked = player[this.layer].barsUnlocked.add(1)},
             unlocked(){return player[this.layer].barsUnlocked.lt(5) && hasUpgrade("b","unlockGreen")}
         },
         unlockPurple:{
             description: "Unlock Bar 6",
-            cost: new Decimal(1500),
+            cost: new Decimal(3000),
             onPurchase(){player[this.layer].barsUnlocked = player[this.layer].barsUnlocked.add(1)},
             unlocked(){return player[this.layer].barsUnlocked.lt(6) && hasUpgrade("b","unlockBlue")}
         },
@@ -249,7 +265,7 @@ addLayer("b", {
         }
     },
     tabFormat: [
-        "main-display",
+        ["main-display",2],
         "prestige-button",
         ["display-text",
             function(){
@@ -280,15 +296,25 @@ addLayer("b", {
         for (var i = 0; i < player[this.layer].barsUnlocked; i++){
             var currentProgress = player[this.layer].barProgress[i]
             player[this.layer].barProgress[i] = currentProgress.add(player[this.layer].progressMult[i].times(diff));
-            if (player[this.layer].barProgress[i].gte(1)){
-                player[this.layer].barProgress[i] = new Decimal(0);
-                var pointsToAdd = new Decimal(1);
-                for (var m = 0; m < player[this.layer].barsUnlocked; m++){
-                    pointsToAdd = pointsToAdd.mul(player[this.layer].pointMultipliers[m]);
-                }
+            while (player[this.layer].barProgress[i].gte(1)){
+                player[this.layer].barProgress[i] = player[this.layer].barProgress[i].sub(1);
+                var pointsToAdd = layers[this.layer].getTotalMultiplier();
                 player.points = player.points.add(pointsToAdd);
-                player[this.layer].pointMultipliers[i] = player[this.layer].pointMultipliers[i].add(player[this.layer].multPerFill[i]);
+                player[this.layer].pointMultipliers[i] = player[this.layer].pointMultipliers[i].add(0.1).add(layers[this.layer].getMetaModifier(i));
             }
         }
+    },
+    getMetaModifier(index){
+        if (player["m"].power === undefined || player["m"].power.eq(0)) return new Decimal(0);
+        if (index === 0) return player["m"].power;
+        else if (index === 1 && hasMilestone("m","0")) return player["m"].power.div(2); 
+        else if (index === 2 && hasMilestone("m","1")) return player["m"].power.div(3);
+        else if (index === 3 && hasMilestone("m","2")) return player["m"].power.div(5);
+        else if (index === 4 && hasMilestone("m","3")) return player["m"].power.div(7);
+        else if (index === 5 && hasMilestone("m","4")) return player["m"].power.div(10);  
+    },
+    passiveGeneration(){
+        if (!hasAchievement("a","23")) return new Decimal(0);
+        else return new Decimal(1)
     }
 })
