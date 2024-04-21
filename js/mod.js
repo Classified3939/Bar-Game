@@ -19,16 +19,16 @@ let VERSION = {
 
 let changelog = `<h1>Changelog:</h1><br>
 	<h3>v0.2: Oh So Meta</h3><br>
-		-Meta layer
-		-5 more achievements
-		-offline progress
-		
+		-Meta layer<br>
+		-5 more achievements<br>
+		-offline progress<br>
+	<br>
 	<h3>v0.1: 6 bars and a dream</h3><br>
 		- 6 Progress Bars<br>
 		- Max (visual) speed button and explanation.<br>
 		-5 wholy unnecessary achievements.`
 
-let winText = `You maxed out the red buyable! That will be the requirement for the next layer... WHEN THERE IS ONE.`
+let winText = `You win Bar Game! ...FOR NOW.`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
